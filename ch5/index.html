@@ -625,14 +625,18 @@ const ALL_Q = [
 // ═══════════════════════════════════════════════════════════════════
 //  TTS — skill-spec speak() helper
 // ═══════════════════════════════════════════════════════════════════
-function speak(text, rate, pitch) {
-  if (!window.speechSynthesis) return;
-  rate = rate || 0.88; pitch = pitch || 1.0;
+function speak(text, rate, onDone) {
+  if (!window.speechSynthesis) { if(typeof onDone==="function") onDone(); return; }
+  rate = (typeof rate === "number") ? rate : 0.88;
   window.speechSynthesis.cancel();
   var utter = new SpeechSynthesisUtterance(text);
   utter.lang = "en-US";
   utter.rate = rate;
-  utter.pitch = pitch;
+  utter.pitch = 1.0;
+  if (typeof onDone === "function") {
+    utter.onend = onDone;
+    utter.onerror = onDone;
+  }
   function setVoiceAndSpeak() {
     var voices = window.speechSynthesis.getVoices();
     var preferred = ["Samantha","Karen","Google US English","Microsoft Aria Online (Natural)"];
@@ -652,7 +656,12 @@ function speak(text, rate, pitch) {
   if (v.length > 0) { setVoiceAndSpeak(); }
   else { window.speechSynthesis.onvoiceschanged = function(){ window.speechSynthesis.onvoiceschanged=null; setVoiceAndSpeak(); }; }
 }
-function stopSpeech(){ window.speechSynthesis && window.speechSynthesis.cancel(); }
+function stopSpeech(){
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
+  // reset any stuck oral buttons
+  setSpeakBtnO("oQBtn","q");
+  setSpeakBtnO("oABtn","a");
+}
 
 // ═══════════════════════════════════════════════════════════════════
 //  SHUFFLE & HELPERS
