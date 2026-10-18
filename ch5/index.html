@@ -703,7 +703,8 @@ function switchTab(btn, screenId) {
   document.querySelectorAll(".tab-btn").forEach(function(b){ b.classList.remove("active"); });
   btn.classList.add("active");
   if (screenId === "homeScreen") { showScreen("homeScreen"); buildHomeCounts(); }
-  else if (screenId !== "drillScreen" && screenId !== "oralScreen") { showScreen(screenId); }
+  else if (screenId === "oralScreen") { showScreen("oralScreen"); startOral(); }
+  else if (screenId !== "drillScreen") { showScreen(screenId); }
 }
 
 function switchTabByKey(key) {
@@ -1182,8 +1183,6 @@ async function toggleRecord(){
 // ═══════════════════════════════════════════════════════════════════
 buildHomeCounts();
 document.getElementById("tabBar").style.display="block";
-// Wire up oral screen start
-document.querySelector(".tab-btn[data-tab='Oral']").addEventListener("click",function(){ startOral(); });
 </script>
 </body>
 </html>
