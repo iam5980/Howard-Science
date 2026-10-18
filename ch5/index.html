@@ -79,6 +79,11 @@ body{font-family:Georgia,serif;background:#0f172a;min-height:100vh;color:#1e293b
 .topic-card.mock .tc-title,.topic-card.oral .tc-title{color:#fff}
 .tc-sub{font-size:clamp(10px,1.4vw,12px);color:#64748b;margin-top:3px}
 .topic-card.mock .tc-sub,.topic-card.oral .tc-sub{color:rgba(255,255,255,.7)}
+.tc-type-row{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:6px}
+.tc-tag{padding:2px 7px;border-radius:99px;font-size:clamp(9px,1.2vw,11px);font-weight:700;letter-spacing:.2px}
+.tc-tag-spell{background:#e0f2fe;color:#0c4a6e}
+.tc-tag-mc{background:#fef3c7;color:#78350f}
+.tc-tag-tf{background:#dcfce7;color:#14532d}
 
 /* ── COUNTDOWN ── */
 #countdownBanner{background:linear-gradient(135deg,#7c3aed,#4f46e5);border-radius:18px;
@@ -313,17 +318,17 @@ audio{flex:1;min-width:170px;height:38px;border-radius:7px}
     <button class="topic-card" onclick="switchTabByKey('L1')">
       <div class="tc-emoji">📘</div>
       <div class="tc-title">Lesson 1<br>Earth</div>
-      <div class="tc-sub" id="cnt-L1"></div>
+      <div class="tc-type-row" id="cnt-L1"></div>
     </button>
     <button class="topic-card" onclick="switchTabByKey('L2')">
       <div class="tc-emoji">📗</div>
       <div class="tc-title">Lesson 2<br>Moving Crust</div>
-      <div class="tc-sub" id="cnt-L2"></div>
+      <div class="tc-type-row" id="cnt-L2"></div>
     </button>
     <button class="topic-card" onclick="switchTabByKey('L3')">
       <div class="tc-emoji">📙</div>
       <div class="tc-title">Lesson 3<br>Weathering &amp; Erosion</div>
-      <div class="tc-sub" id="cnt-L3"></div>
+      <div class="tc-type-row" id="cnt-L3"></div>
     </button>
     <button class="topic-card mock" onclick="switchTabByKey('Mock')">
       <div class="tc-emoji">🎯</div>
@@ -544,6 +549,18 @@ const ALL_Q = [
 {id:80,topic:"L3",type:"tf",q:"Most natural processes change the land quickly.",a:"false"},
 {id:81,topic:"L3",type:"tf",q:"The Grand Canyon was formed by the Colorado River eroding the land.",a:"true"},
 {id:82,topic:"L3",type:"tf",q:"Chemical weathering changes the type of rock.",a:"true"},
+// ── LESSON 3: PEOPLE CHANGE THE LAND ──────────────────────────────
+{id:83,topic:"L3",type:"spell",q:"___ is digging into the land for useful resources like minerals, metals, or fuel.",a:"Mining"},
+{id:84,topic:"L3",type:"spell",q:"Places where people pile trash are called ___.",a:"landfills"},
+{id:85,topic:"L3",type:"spell",q:"The dropping off of weathered rock is called ___.",a:"deposition"},
+{id:86,topic:"L3",type:"mc",q:"Which of the following is a way people change the land by removing resources?",choices:["A. Building a dam","B. Mining","C. Planting trees","D. Creating a nature reserve"],a:"B. Mining"},
+{id:87,topic:"L3",type:"mc",q:"What happens when people cut down or burn forests to clear land?",choices:["A. Erosion slows down because roots hold soil","B. Erosion easily washes away the soil without tree roots","C. New trees grow back immediately","D. The land becomes more fertile"],a:"B. Erosion easily washes away the soil without tree roots"},
+{id:88,topic:"L3",type:"mc",q:"How do landfills change the land?",choices:["A. They remove minerals from the ground","B. They carve valleys into rock","C. They form large mounds or hills where people pile trash","D. They cause chemical weathering"],a:"C. They form large mounds or hills where people pile trash"},
+{id:89,topic:"L3",type:"mc",q:"Which human activity can HELP the land recover from erosion?",choices:["A. Mining","B. Building landfills","C. Planting and caring for trees","D. Burning forests"],a:"C. Planting and caring for trees"},
+{id:90,topic:"L3",type:"tf",q:"Mining is digging into the land for useful resources like minerals, metals, or fuel.",a:"true"},
+{id:91,topic:"L3",type:"tf",q:"Without trees, erosion easily washes away the soil.",a:"true"},
+{id:92,topic:"L3",type:"tf",q:"People change Earth's land more slowly than natural processes do.",a:"false"},
+{id:93,topic:"L3",type:"tf",q:"Landfills are always harmful and can never blend in with the surrounding land.",a:"false"},
 // ── ORAL ───────────────────────────────────────────────────────────
 {id:100,topic:"Oral",type:"oral",subtopic:"Earth's Layers",emoji:"🪨",
  q:"What is the layer of Earth under the crust?",
@@ -708,9 +725,15 @@ function buildHomeCounts() {
   var o = ALL_Q.filter(function(q){return q.type==="oral";}).length;
   document.getElementById("totalCount").textContent = w+" written · "+o+" oral questions";
   ["L1","L2","L3"].forEach(function(t){
-    var n = ALL_Q.filter(function(q){return q.topic===t;}).length;
+    var pool = ALL_Q.filter(function(q){return q.topic===t;});
+    var nS = pool.filter(function(q){return q.type==="spell";}).length;
+    var nM = pool.filter(function(q){return q.type==="mc";}).length;
+    var nT = pool.filter(function(q){return q.type==="tf";}).length;
     var el = document.getElementById("cnt-"+t);
-    if(el) el.textContent = n+" questions";
+    if(el) el.innerHTML =
+      (nS?'<span class="tc-tag tc-tag-spell">✏️ Fill×'+nS+'</span>':'')+
+      (nM?'<span class="tc-tag tc-tag-mc">🔘 MC×'+nM+'</span>':'')+
+      (nT?'<span class="tc-tag tc-tag-tf">✓✗ T/F×'+nT+'</span>':'');
   });
   var oEl = document.getElementById("cnt-Oral");
   if(oEl) oEl.textContent = o+" questions";
